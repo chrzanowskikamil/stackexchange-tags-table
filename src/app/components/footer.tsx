@@ -2,12 +2,13 @@ import { Container, Typography } from '@mui/material';
 import Link from 'next/link';
 
 export const Footer = () => {
+  const githubLink = 'https://github.com/chrzanowskikamil';
   const date = new Date();
-  const year = date.getFullYear();
+
   return (
     <Container component='footer'>
       <Typography>
-        created by <Link href='https://github.com/chrzanowskikamil'>chrzanowski-kamil</Link> @{year}
+        created by <Link href={githubLink}>chrzanowski-kamil</Link> @{date.getFullYear()}
       </Typography>
     </Container>
   );

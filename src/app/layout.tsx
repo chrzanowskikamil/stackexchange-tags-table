@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { AppBar, Container, Stack } from '@mui/material';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
+import Providers from './providers';
 import { Logo } from './components/logo';
 import { Footer } from './components/footer';
 import './globals.css';
@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={inter.className}>
-        <AppRouterCacheProvider>
+        <Providers>
           <Stack
             height='100vh'
             spacing={4}
@@ -36,7 +36,7 @@ export default function RootLayout({
             {children}
             <Footer />
           </Stack>
-        </AppRouterCacheProvider>
+        </Providers>
       </body>
     </html>
   );

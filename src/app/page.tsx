@@ -1,4 +1,4 @@
-import EnhancedTable from './components/table';
+import { TagsTable } from './components/table/tags-table';
 
 export interface TagItem {
   name: string;
@@ -10,15 +10,16 @@ interface TagsResponse {
   has_more: boolean;
 }
 
-async function getTags(): Promise<TagsResponse> {
-  const response = await fetch('https://api.stackexchange.com/2.3/tags?Y&site=stackoverflow');
-  const data = await response.json();
+export async function getTags(page: number): Promise<TagsResponse> {
+  const response = await fetch(`https://api.stackexchange.com/2.3/tags?min=300&site=stackoverflow`);
+  const data = response.json();
   return data;
 }
 
 export default async function Home() {
-  const tags = await getTags();
-  console.log(tags);
-
-  return <main></main>;
+  return (
+    <main>
+      <TagsTable />
+    </main>
+  );
 }
