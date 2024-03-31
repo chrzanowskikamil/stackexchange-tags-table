@@ -1,8 +1,9 @@
 'use client';
-import { TagItem } from '@/app/page';
+
 import { Cell, ColumnDef, Row, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { ChangeEvent, FC, ReactElement, ReactNode, useMemo, useState } from 'react';
 import { Box, Paper, Table as MuiTable, TableCell, TableHead, TableRow, TableBody, Skeleton, Pagination } from '@mui/material';
+import { TagItem } from '@/app/get-tags';
 
 interface TableProps {
   data: TagItem[];
