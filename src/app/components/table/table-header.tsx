@@ -1,6 +1,7 @@
+import { TagItem } from '@/types/tags-response';
 import { ColumnDef } from '@tanstack/react-table';
 
-export const Columns: ColumnDef<any, any>[] = [
+export const columns: ColumnDef<TagItem>[] = [
   {
     accessorKey: 'tagName',
     header: 'Tag name',

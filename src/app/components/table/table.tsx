@@ -1,109 +1,80 @@
 'use client';
 
-import { Cell, ColumnDef, Row, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ChangeEvent, FC, ReactElement, ReactNode, useMemo, useState } from 'react';
-import { Box, Paper, Table as MuiTable, TableCell, TableHead, TableRow, TableBody, Skeleton, Pagination } from '@mui/material';
-import { TagItem } from '@/app/get-tags';
+import { Cell, ColumnDef, PaginationState, Row, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
+import { ChangeEvent, FC, Fragment, ReactElement, ReactNode, useMemo, useState } from 'react';
+import { Box, Paper, Table as MuiTable, TableCell, TableHead, TableRow, TableBody, Skeleton, TablePagination } from '@mui/material';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { columns } from './table-header';
+import { getAllTags } from '@/actions/get-all-tags';
 
-interface TableProps {
-  data: TagItem[];
-  columns: ColumnDef<any>[];
-  isFetching: boolean;
-  skeletonCount?: number;
-  skeletonHeight?: number;
-  headerComponent?: JSX.Element;
-  pageCount: number;
-  page?: (page: number) => void;
-  onClickRow?: (cell: Cell<any, unknown>, row: Row<any>) => void;
-  children?: ReactNode | ReactElement;
-  handleRow?: () => void;
-}
+const INITIAL_PAGE_INDEX = 0;
+const INITIAL_PAGE_SIZE = 10;
 
-export const Table: FC<TableProps> = ({ data, columns, isFetching, skeletonCount = 10, skeletonHeight = 28, headerComponent, pageCount, page, onClickRow, children, handleRow }) => {
-  const [paginationPage, setPaginationPage] = useState(1);
-  const memoizedData = useMemo(() => data, [data]);
-  const memoizedColumns = useMemo(() => columns, [columns]);
-  const memoizedHeaderComponent = useMemo(() => headerComponent, [headerComponent]);
+export const Table: FC = () => {
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: INITIAL_PAGE_INDEX, pageSize: INITIAL_PAGE_SIZE });
 
-  console.log(data);
+  const defaultData = useMemo(() => [], []);
 
-  const { getHeaderGroups, getRowModel, getAllColumns } = useReactTable({
-    data: memoizedData,
-    columns: memoizedColumns,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    pageCount,
+  const { data, error, isError, isLoading } = useQuery({
+    queryKey: ['tags'],
+    queryFn: () => getAllTags(),
+    placeholderData: keepPreviousData,
   });
 
-  const skeletons = Array.from({ length: skeletonCount }, (_, index) => index);
-
-  const columnCount = getAllColumns().length;
-
-  //   const noDataFound = !isFetching && memoizedData.length === 0;
-
-  const handlePageChange = (event: ChangeEvent<unknown>, currentPage: number) => {
-    setPaginationPage(currentPage === 0 ? 1 : currentPage);
-    page?.(currentPage === 0 ? 1 : currentPage);
-  };
+  const table = useReactTable({
+    columns,
+    data: data ?? defaultData,
+    rowCount: data?.length,
+    state: {
+      pagination,
+    },
+    onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    debugTable: true,
+  });
 
   return (
-    <Paper>
-      <Box>{memoizedHeaderComponent && <Box>{memoizedHeaderComponent}</Box>}</Box>
-      <Box>
-        <MuiTable>
-          {!isFetching && (
-            <TableHead>
-              {getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableCell key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHead>
-          )}
-          <TableBody>
-            {!isFetching ? (
-              getRowModel()?.rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  onClick={handleRow}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      onClick={() => onClickRow?.(cell, row)}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <>
-                {skeletons.map((skeleton) => (
-                  <TableRow key={skeleton}>
-                    {Array.from({ length: columnCount }, (_, index) => index).map((element) => (
-                      <TableCell
-                        key={element}
-                        sx={{ height: skeletonHeight }}>
-                        <Skeleton height={skeletonHeight} />
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </>
-            )}
-          </TableBody>
-        </MuiTable>
-      </Box>
-      {pageCount && page && (
-        <Pagination
-          count={pageCount}
-          page={paginationPage}
-          onChange={handlePageChange}
-          showFirstButton
-          showLastButton
-        />
-      )}
-    </Paper>
+    <div>
+      <div>
+        <table>
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <th
+                      key={header.id}
+                      colSpan={header.colSpan}>
+                      {header.isPlaceholder ? null : <div>{flexRender(header.column.columnDef.header, header.getContext())}</div>}
+                    </th>
+                  );
+                })}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => {
+              return (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => {
+                    return <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>;
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 20, 30, 40]}
+        component='div'
+        count={table.getRowCount()}
+        rowsPerPage={pagination.pageSize}
+        page={pagination.pageIndex}
+        onPageChange={(event: unknown, newPage: number) => setPagination({ ...pagination, pageIndex: newPage })}
+        onRowsPerPageChange={(event: ChangeEvent<HTMLInputElement>) => setPagination({ ...pagination, pageSize: parseInt(event.target.value, 10) })}
+      />
+    </div>
   );
 };

@@ -1,9 +1,9 @@
-import { TagsTable } from './components/table/tags-table';
+import { Table } from './components/table/table';
 
 export default async function Home() {
   return (
     <main>
-      <TagsTable />
+      <Table />
     </main>
   );
 }
