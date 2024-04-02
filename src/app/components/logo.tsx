@@ -4,7 +4,7 @@ export const Logo = () => (
   <Image
     src='/logo.png'
     alt='Stack Overflow Tags Logo'
-    width={194}
-    height={36}
+    width={220}
+    height={40}
   />
 );

@@ -3,14 +3,14 @@ import { ColumnDef } from '@tanstack/react-table';
 
 export const columns: ColumnDef<TagItem>[] = [
   {
-    accessorKey: 'tagName',
+    accessorKey: 'name',
     header: 'Tag name',
     cell: (tag) => {
       return <span>{tag.row.original.name}</span>;
     },
   },
   {
-    accessorKey: 'tagCount',
+    accessorKey: 'count',
     header: 'Tag count',
     cell: (tag) => {
       return <span>{tag.row.original.count}</span>;

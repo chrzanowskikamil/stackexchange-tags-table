@@ -1,12 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import Providers from './providers';
 import { Logo } from './components/logo';
 import { Footer } from './components/footer';
-import { AppBar, Container, Stack } from '@mui/material';
-import './globals.css';
+import { AppBar, Container, CssBaseline, Stack } from '@mui/material';
 
-const inter = Inter({ subsets: ['latin'] });
+const montserratFont = Montserrat({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Stackexchange Tags Table',
@@ -20,15 +19,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={inter.className}>
+      <body className={montserratFont.className}>
+        <CssBaseline />
         <Providers>
           <Stack
             height='100vh'
-            spacing={4}
-            justifyContent='space-between'>
+            spacing={6}
+            justifyContent='space-between'
+            alignItems='center'>
             <AppBar
               color='transparent'
-              position='static'>
+              position='static'
+              sx={{ boxShadow: 'none', borderBottom: '1px solid #E4E6E7' }}>
               <Container sx={{ paddingY: '2rem' }}>
                 <Logo />
               </Container>
