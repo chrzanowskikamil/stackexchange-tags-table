@@ -1,31 +1,22 @@
 'use client';
 
+import { ChangeEvent, FC, useState } from 'react';
+import { Alert, Box, Container, Table as MuiTable, TableCell, TableContainer, TableHead, TableRow, TableBody, Skeleton, TablePagination, useMediaQuery, useTheme } from '@mui/material';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import { PaginationState, SortingState, flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
-import { ChangeEvent, FC, useMemo, useState } from 'react';
-import { Box, Container, Table as MuiTable, TableCell, TableContainer, TableHead, TableRow, TableBody, Skeleton, TablePagination, useMediaQuery } from '@mui/material';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { columns } from './table-header';
-import { getAllTags } from '@/actions/get-all-tags';
+import { INITIAL_PAGE_INDEX, INITIAL_PAGE_SIZE } from '@/utils';
+import { useFetchTags } from '@/hooks/use-fetch-tags';
 
-const INITIAL_PAGE_INDEX = 0;
-const INITIAL_PAGE_SIZE = 10;
-
-export const Table: FC = () => {
-  const { data, error, isError, isLoading } = useQuery({
-    queryKey: ['tags'],
-    queryFn: () => getAllTags(),
-    placeholderData: keepPreviousData,
-  });
-
+export const TagsTable: FC = () => {
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: INITIAL_PAGE_INDEX, pageSize: INITIAL_PAGE_SIZE });
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const defaultData = useMemo(() => [], []);
+  const { data, error, isError, isLoading } = useFetchTags();
 
   const table = useReactTable({
     columns,
-    data: data ?? defaultData,
+    data,
     rowCount: data?.length,
     state: {
       pagination,
@@ -36,15 +27,16 @@ export const Table: FC = () => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    debugTable: true,
   });
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <Container maxWidth='md'>
       <TablePagination
-        sx={{ padding: 0, margin: 0 }}
         component='div'
-        labelRowsPerPage={useMediaQuery('(max-width: 400px)') ? 'Rows' : 'Rows per page:'}
+        labelRowsPerPage={isMobile ? 'Rows' : 'Rows per page:'}
         rowsPerPageOptions={[5, 10, 20, 30, 40]}
         count={table.getRowCount()}
         rowsPerPage={pagination.pageSize}
@@ -82,7 +74,7 @@ export const Table: FC = () => {
             {isLoading
               ? Array.from(new Array(INITIAL_PAGE_SIZE)).map((_, index) => (
                   <TableRow key={index}>
-                    {columns.map((column, columnIndex) => (
+                    {columns.map((_, columnIndex) => (
                       <TableCell key={columnIndex}>
                         <Skeleton height={20} />
                       </TableCell>
@@ -92,7 +84,7 @@ export const Table: FC = () => {
               : table.getRowModel().rows.map((row) => {
                   return (
                     <TableRow
-                      sx={{ ':hover': { backgroundColor: '#fafafa' } }}
+                      sx={{ ':hover': { backgroundColor: '#FAFAFA' } }}
                       key={row.id}>
                       {row.getVisibleCells().map((cell) => {
                         return <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>;
@@ -103,6 +95,7 @@ export const Table: FC = () => {
           </TableBody>
         </MuiTable>
       </TableContainer>
+      {isError && <Alert severity='error'>Ooopss, we an have Error 🤕 {error?.message}</Alert>}
     </Container>
   );
 };

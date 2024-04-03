@@ -1,7 +1,8 @@
-import { Container, Typography } from '@mui/material';
+import { FC } from 'react';
 import Link from 'next/link';
+import { Container, Typography } from '@mui/material';
 
-export const Footer = () => {
+export const Footer: FC = () => {
   const githubLink = 'https://github.com/chrzanowskikamil';
   const date = new Date();
 

@@ -8,3 +8,6 @@ export const MAX_PAGE_LIMIT: number = 25;
 
 // The maximum number of items per page as defined by the Stack Exchange API
 export const MAX_PAGE_SIZE: number = 100;
+
+export const INITIAL_PAGE_INDEX: number = 0;
+export const INITIAL_PAGE_SIZE: number = 10;

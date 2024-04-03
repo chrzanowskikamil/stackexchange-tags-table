@@ -1,11 +1,8 @@
 import type { Metadata } from 'next';
-import { Montserrat } from 'next/font/google';
 import Providers from './providers';
+import { AppBar, Container, CssBaseline, Stack } from '@mui/material';
 import { Logo } from './components/logo';
 import { Footer } from './components/footer';
-import { AppBar, Container, CssBaseline, Stack } from '@mui/material';
-
-const montserratFont = Montserrat({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Stackexchange Tags Table',
@@ -19,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={montserratFont.className}>
+      <body>
         <CssBaseline />
         <Providers>
           <Stack
