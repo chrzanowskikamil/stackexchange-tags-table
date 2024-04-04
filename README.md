@@ -1,6 +1,6 @@
-# Mediprota - React Recruitment Task
+# Mediporta - React Recruitment Task
 
-Recruitment task for the position of React Developer at Mediprota company.
+Recruitment task for the position of React Developer at Mediporta company.
 
 # Live demo
 
@@ -10,7 +10,7 @@ You can see the live demo here: https://stackexchange-tags-table-pled.vercel.app
 
 |       Technology          |              Usage                                       | 
 | :-----------------------: | :------------------------------------------------------: |
-|         TypeScript        |              Programming languge                         |
+|         TypeScript        |              Programming Language                        |
 |           React           |              User Interface Library                      | 
 |            MUI            |              Components Library                          |
 |       Tanstack Query      |       Data fetching, caching, and synchronization        |
